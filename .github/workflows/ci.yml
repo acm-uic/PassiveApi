@@ -1,0 +1,11 @@
+name: Build PassiveApi
+
+on: [ push, pull_request ]
+
+jobs:
+  build:
+    runs-on: ubuntu-16.04
+    steps:
+      - uses: actions/checkout@master
+      - name: Build
+        run: docker build .
