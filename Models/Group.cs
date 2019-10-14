@@ -22,8 +22,9 @@ namespace PassiveApi.Models
 
                 dirEntry.CommitChanges();
                 dirEntry.Close();
+                dirEntry.Dispose();
             }
-            catch (System.DirectoryServices.DirectoryServicesCOMException E)
+            catch (DirectoryServicesCOMException E)
             {
                 throw E;
             }
@@ -38,8 +39,9 @@ namespace PassiveApi.Models
 
                 dirEntry.CommitChanges();
                 dirEntry.Close();
+                dirEntry.Dispose();
             }
-            catch (System.DirectoryServices.DirectoryServicesCOMException E)
+            catch (DirectoryServicesCOMException E)
             {
                 throw E;
             }

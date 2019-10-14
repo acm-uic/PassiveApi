@@ -13,19 +13,19 @@ namespace PassiveApi.Models
         private string dn;
 
         // AD Attributes
-        private string userName { get; set; }
-        private string userPassword { get; set; }
-        private string firstName { get; set; }
-        private string lastName { get; set; }
+        private string UserName { get; set; }
+        private string UserPassword { get; set; }
+        private string FirstName { get; set; }
+        private string LastName { get; set; }
         private UInt32 UIN { get; set; }
-        private string title { get; set; }
-        private string membershipNumber { get; set; }
-        private string memberType { get; set; }
-        private string major { get; set; }
-        private string college { get; set; }
-        private MailAddress email { get; set; }
-        private string phoneNumber { get; set; }
-        private Dictionary<string, string> otherData;
+        private string Title { get; set; }
+        private string MembershipNumber { get; set; }
+        private string MemberType { get; set; }
+        private string Major { get; set; }
+        private string College { get; set; }
+        private MailAddress Email { get; set; }
+        private string PhoneNumber { get; set; }
+        private Dictionary<string, string> OtherData { get; set; }
 
         private static string GetDistinguishedName(string userName)
         {
@@ -54,28 +54,31 @@ namespace PassiveApi.Models
 
                 string userPath = AD.Host + "/" + month + "," + year + "," + AD.UsersOU + "," + AD.BaseDN;
                 DirectoryEntry dirEntry = AD.GetObjectDirectoryEntry(userPath);
-                DirectoryEntry newUser = dirEntry.Children.Add("CN=" + user.userName, "user");
+                DirectoryEntry newUser = dirEntry.Children.Add("CN=" + user.UserName, "user");
 
-                newUser.Properties["sAMAccountName"].Value = user.userName;
+                newUser.Properties["sAMAccountName"].Value = user.UserName;
                 newUser.Properties["employeeID"].Value = user.UIN;
-                newUser.Properties["department"].Value = user.major;
-                newUser.Properties["company"].Value = user.college;
-                newUser.Properties["title"].Value = user.title;
-                newUser.Properties["mail"].Value = user.email;
-                newUser.Properties["telephoneNumber"].Value = user.phoneNumber;
-                newUser.Properties["givenName"].Value = user.firstName;
-                newUser.Properties["sn"].Value = user.lastName;
-                newUser.Properties["employeeNumber"].Value = user.membershipNumber;
-                newUser.Properties["employeeType"].Value = user.memberType;
-                newUser.Properties["description"].Value = user.otherData;
+                newUser.Properties["department"].Value = user.Major;
+                newUser.Properties["company"].Value = user.College;
+                newUser.Properties["title"].Value = user.Title;
+                newUser.Properties["mail"].Value = user.Email;
+                newUser.Properties["telephoneNumber"].Value = user.PhoneNumber;
+                newUser.Properties["givenName"].Value = user.FirstName;
+                newUser.Properties["sn"].Value = user.LastName;
+                newUser.Properties["employeeNumber"].Value = user.MembershipNumber;
+                newUser.Properties["employeeType"].Value = user.MemberType;
+                newUser.Properties["description"].Value = user.OtherData;
                 newUser.CommitChanges();
 
                 user.dn = newUser.Properties["distinguishedName"].Value.ToString();
 
                 dirEntry.Close();
+                dirEntry.Dispose();
                 newUser.Close();
+                newUser.Dispose();
 
-                User.UpdatePasword(user.dn, user.userPassword);
+
+                User.UpdatePasword(user.dn, user.UserPassword);
                 User.Unlock(user.dn);
                 User.Enable(user.dn);
                 Group.AddMember(user.dn, AD.PaidGroup);
@@ -98,8 +101,9 @@ namespace PassiveApi.Models
 
                 user.CommitChanges();
                 user.Close();
+                user.Dispose();
             }
-            catch (System.DirectoryServices.DirectoryServicesCOMException E)
+            catch (DirectoryServicesCOMException E)
             {
                 throw E;
             }
@@ -115,8 +119,9 @@ namespace PassiveApi.Models
 
                 user.CommitChanges();
                 user.Close();
+                user.Dispose();
             }
-            catch (System.DirectoryServices.DirectoryServicesCOMException E)
+            catch (DirectoryServicesCOMException E)
             {
                 throw E;
             }
@@ -131,8 +136,9 @@ namespace PassiveApi.Models
 
                 user.CommitChanges();
                 user.Close();
+                user.Dispose();
             }
-            catch (System.DirectoryServices.DirectoryServicesCOMException E)
+            catch (DirectoryServicesCOMException E)
             {
                 throw E;
             }
@@ -147,8 +153,9 @@ namespace PassiveApi.Models
 
                 user.CommitChanges();
                 user.Close();
+                user.Dispose();
             }
-            catch (System.DirectoryServices.DirectoryServicesCOMException E)
+            catch (DirectoryServicesCOMException E)
             {
                 throw E;
             }
@@ -156,21 +163,21 @@ namespace PassiveApi.Models
 
         public User(string userName, string userPassword, string firstName, string lastName, string UIN, string title, string membershipNumber, string memberType, string major, string college, string email, string phoneNumber, string otherData)
         {
-            this.userName = userName;
-            this.userPassword = userPassword;
-            this.firstName = firstName;
-            this.lastName = lastName;
+            this.UserName = userName;
+            this.UserPassword = userPassword;
+            this.FirstName = firstName;
+            this.LastName = lastName;
             this.UIN = UInt32.Parse(UIN);
-            this.title = title;
-            this.membershipNumber = membershipNumber;
-            this.memberType = memberType;
-            this.major = major;
-            this.college = college;
-            this.email = new MailAddress(email);
-            this.phoneNumber = phoneNumber;
-            this.otherData = JsonConvert.DeserializeObject<Dictionary<string, string>>(otherData);
+            this.Title = title;
+            this.MembershipNumber = membershipNumber;
+            this.MemberType = memberType;
+            this.Major = major;
+            this.College = college;
+            this.Email = new MailAddress(email);
+            this.PhoneNumber = phoneNumber;
+            this.OtherData = JsonConvert.DeserializeObject<Dictionary<string, string>>(otherData);
 
-            if (GetDistinguishedName(this.userName) == string.Empty)
+            if (GetDistinguishedName(this.UserName) == string.Empty)
             {
                 this.dn = CreateUserInAD(this);
             }

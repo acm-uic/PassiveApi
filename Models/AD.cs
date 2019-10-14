@@ -53,7 +53,6 @@ namespace PassiveApi.Models
         }
         public static DirectoryEntry GetObjectDirectoryEntry(string objectName, ObjectClass objectCls = ObjectClass.user, ReturnType returnValue = ReturnType.distinguishedName)
         {
-            string distinguishedName = string.Empty;
             string connectionString = AD.Host + "/" + AD.BaseDN;
             DirectoryEntry entry = new DirectoryEntry(connectionString, AD.User, AD.Password);
             DirectorySearcher mySearcher = new DirectorySearcher(entry);
@@ -100,7 +99,7 @@ namespace PassiveApi.Models
             {
                 var _ = entry.Guid;
             }
-            catch (System.DirectoryServices.DirectoryServicesCOMException)
+            catch (DirectoryServicesCOMException)
             {
                 throw (new System.Exception("Cannot find object. distinguishedName: " + distinguishedName));
             }

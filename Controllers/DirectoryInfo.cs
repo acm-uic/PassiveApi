@@ -7,7 +7,7 @@ namespace PassiveApi.Models
 {
     public class DirectoryInfo : Resource
     {
-       
+
     }
 
 }

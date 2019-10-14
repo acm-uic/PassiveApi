@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PassiveApi.Models
 {
-    public class OU :  Resource
+    public class OU : Resource
     {
         public OU(string name, string path)
         {
@@ -14,13 +14,17 @@ namespace PassiveApi.Models
             {
                 DirectoryEntry ouEntry = new DirectoryEntry(AD.Host + "/" + name + "," + path, AD.User, AD.Password);
                 var test = ouEntry.Guid;
+                ouEntry.Dispose();
             }
-            catch (System.DirectoryServices.DirectoryServicesCOMException)
+            catch (DirectoryServicesCOMException)
             {
                 DirectoryEntry baseEntry = new DirectoryEntry(AD.Host + "/" + path, AD.User, AD.Password);
-                baseEntry = baseEntry.Children.Add(name, "OrganizationalUnit");
-                baseEntry.CommitChanges();
+                DirectoryEntry ouObj = baseEntry.Children.Add(name, "OrganizationalUnit");
+                ouObj.CommitChanges();
+                ouObj.Close();
+                ouObj.Dispose();
                 baseEntry.Close();
+                baseEntry.Dispose();
             }
         }
     }
