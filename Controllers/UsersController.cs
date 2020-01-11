@@ -20,7 +20,6 @@ namespace PassiveApi.Controllers
         {
             _logger = logger;
             _userService = userService;
-
         }
 
         // GET /user/{userName}

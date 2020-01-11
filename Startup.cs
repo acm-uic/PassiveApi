@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,6 +29,27 @@ namespace PassiveApi
         {
             services.AddControllers();
             services.AddScoped<IUserService, DefaultUserService>();
+            
+            // Allows for the request body to be read
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
+            services.AddAuthentication()
+                 .AddWsFederation(options =>
+                 {
+                     options.MetadataAddress = System.Environment.GetEnvironmentVariable("PASSIVE_ADFS_METADATA");
+
+                     options.Wtrealm = System.Environment.GetEnvironmentVariable("PASSIVE_ADFS_WTREALM");
+
+                 });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
