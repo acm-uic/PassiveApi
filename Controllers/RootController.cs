@@ -32,5 +32,12 @@ namespace PassiveApi.Controllers
 
             return Ok(response);
         }
+
+        [HttpPost(Name = nameof(GetRoot))]
+        public IActionResult PostRoot()
+        {
+            return Ok("Root route was hit!");
+        }
+
     }
 }
